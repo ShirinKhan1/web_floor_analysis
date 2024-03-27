@@ -12,28 +12,35 @@ MAX = 54
 
 
 def get_links(url, page=None):
-    r = requests.get(url)
-    if not (page is None):
-        r = requests.get(url + '&page=' + str(page))
-    bs = BeautifulSoup(r.content, 'html.parser')
-    a_href = bs.find_all('a', class_='_93444fe79c--media--9P6wN')
-    return [a.get('href') for a in a_href]
+    while True:
+        r = requests.get(url)
+        if not (page is None):
+            r = requests.get(url + '&page=' + str(page))
+        bs = BeautifulSoup(r.content, 'html.parser')
+        a_href = bs.find_all('a', class_='_93444fe79c--media--9P6wN')
+        links = [a.get('href') for a in a_href]
+        if links:
+            return links
+        else:
+            print('list in null!! =(')
+            # print(r.text)
+            time.sleep(1)
 
 
 def parse_links(url):
-    with open('links.csv', mode='w', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
-        writer.writerow(['links'])
-
-        for i in range(1, MAX + 1):
-            links = get_links(URL, i)
-            print(str(i) + ' ' + str(links))
-            for link in links:
-                writer.writerow([link])
-            # time.sleep(5)
+    # with open('links.csv', mode='w', newline='', encoding='utf-8') as file:
+    file = pd.read_csv('links.csv')
+        # writer = csv.writer(file)
+        # writer.writerow(['links'])
+    for i in range(35, MAX + 1):
+        links = get_links(URL, i)
+        print(str(i) + ' ' + str(links))
+        file = pd.concat([file, pd.DataFrame(data=links, columns=['links'])])
+        file.to_csv('links.csv', index=False)
+        time.sleep(30)
 
     print("Done!")
 
 
 if __name__ == '__main__':
-    pass
+    parse_links(URL)
