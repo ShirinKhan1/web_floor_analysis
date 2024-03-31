@@ -24,7 +24,7 @@ def get_links(url, page=None):
         else:
             print('list in null!! =(')
             # print(r.text)
-            time.sleep(1)
+            time.sleep(60)
 
 
 def parse_links(url):
