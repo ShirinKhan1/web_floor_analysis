@@ -6,13 +6,15 @@ from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 import pandas as pd
 import time
 
-# URL = 'https://www.cian.ru/sale/flat/292125772/'
-URL = 'https://www.cian.ru/sale/flat/295473855/'
+URL = 'https://www.cian.ru/sale/flat/292125772/'
+
+
+# URL = 'https://www.cian.ru/sale/flat/295473855/'
 
 
 def get_name(main):
     try:
-        return main.find('h1', class_='a10a3f92e9--title--vlZwT').text[:-2]
+        return main.find('div', class_='a10a3f92e9--container--BIifh a10a3f92e9--container--M0xiL').text
     except Exception as e:
         return e
 
@@ -76,10 +78,10 @@ def get_photos(main):
         # valid_links = [link for link in links if check_link(link)]
 
         # # img_tags = main.find_all('img', {'loading': 'lazy'})
-        imgs = main.find_all('img', class_='a10a3f92e9--container--KIwW4 a10a3f92e9--container--contain--cYP76')
+        imgs = main.find_all('img', class_='a10a3f92e9--container--KIwW4')
         links = [src.get('src') for src in imgs]
-        valid_links = [link for link in links if check_link(link)]
-        return list(set(valid_links))
+        valid_links = [link for link in links if check_link(link) and link[-5] == '2']
+        return list(set(valid_links)), len(list(set(valid_links)))
     except Exception as e:
         return e
 
@@ -96,7 +98,10 @@ def get_address(main):
 
 def get_floor(main):
     try:
-        return main.find('div', class_='a10a3f92e9--text--eplgM').text
+        data = [div_tag.text for div_tag in main.find_all('div', class_='a10a3f92e9--item--Jp5Qv')]
+        for item in data:
+            if 'Этаж' in item:
+                return item
     except Exception as e:
         return e
 
@@ -113,6 +118,7 @@ def get_page(url):
         # 'addres': get_address(bs),
         'photos': get_photos(bs),
         # 'link': url
+        # 'floor': get_floor(bs)
     }
     for key in data:
         if isinstance(data[key], Exception):
