@@ -53,7 +53,7 @@ def get_price_info(main):
         data = [val.text for val in main.find_all('div', class_='a10a3f92e9--item--iWTsg')]
         data[0] = extract_digits(data[0])
         # text = data[2]
-        data[2] = data[2][:7] + ' ' + data[2][7:]
+        # data[2] = data[2][:7] + ' ' + data[2][7:]
         return data
     except Exception as e:
         return e
@@ -75,10 +75,10 @@ def get_photos(main):
         # links = [src.get('src') for src in div_tag.find_all('img')]
         # valid_links = [link for link in links if check_link(link)]
 
-        img_tags = main.find_all('img', {'loading': 'lazy'})
-        links = [src.get('src') for src in img_tags]
+        # # img_tags = main.find_all('img', {'loading': 'lazy'})
+        imgs = main.find_all('img', class_='a10a3f92e9--container--KIwW4 a10a3f92e9--container--contain--cYP76')
+        links = [src.get('src') for src in imgs]
         valid_links = [link for link in links if check_link(link)]
-
         return list(set(valid_links))
     except Exception as e:
         return e
@@ -94,18 +94,25 @@ def get_address(main):
         return e
 
 
+def get_floor(main):
+    try:
+        return main.find('div', class_='a10a3f92e9--text--eplgM').text
+    except Exception as e:
+        return e
+
+
 def get_page(url):
     r = requests.get(url)
     bs = BeautifulSoup(r.content, features='html.parser')
     data = {
-        'name': get_name(bs),
-        'price': get_price(bs),
-        'price_info': get_price_info(bs),
-        'float': get_float(bs),
-        'house': get_house(bs),
-        'addres': get_address(bs),
+        # 'name': get_name(bs),
+        # 'price': get_price(bs),
+        # 'price_info': get_price_info(bs),
+        # 'float': get_float(bs),
+        # 'house': get_house(bs),
+        # 'addres': get_address(bs),
         'photos': get_photos(bs),
-        'link': url
+        # 'link': url
     }
     for key in data:
         if isinstance(data[key], Exception):
@@ -143,11 +150,11 @@ def parse_links(links: str, num_page=0):
         print(data)
         if not isinstance(data, tuple):
             save_dict_to_json(data, 'parse1.json')
-        time.sleep(5)
+        time.sleep(60)
 
 
 if __name__ == '__main__':
-    # test_data = get_page(URL)
-    # print(test_data)
+    test_data = get_page(URL)
+    print(test_data)
     # save_dict_to_json(test_data, 'parse_page.json')
-    parse_links(links='links.csv', num_page=0)
+    # parse_links(links='links.csv', num_page=1055)
