@@ -1,6 +1,10 @@
 import json
+import pandas as pd
 from fix_data_after_parsing import args, args_house
+
 FILE_NAME = 'parse1_fixed.json'
+file_to_csv = 'parse1_fixed.csv'
+file_link_photo = 'photo_links.json'
 properties = set()
 fixed_data = []
 with (open(FILE_NAME, 'r', encoding='utf-8') as file):
@@ -23,4 +27,20 @@ with (open(FILE_NAME, 'r', encoding='utf-8') as file):
 
         properties |= set(row.keys())
         fixed_data.append(row)
-    print(fixed_data)
+        # print(fixed_data[0])
+properties = list(properties)
+# print(properties)
+properties = list(properties)
+properties.pop(properties.index('photos'))
+df = pd.DataFrame(fixed_data, columns=properties)
+df.to_csv(file_to_csv)
+photo_link = []
+for row in fixed_data:
+    photo_link.append({'link': row['link'], 'photos': row['photos']})
+
+
+# def write_new_data(new_data, filename=FILE_NAME):
+with open(file_link_photo, 'w', encoding='utf-8') as file:
+    json.dump(photo_link, file, ensure_ascii=False, indent=4)
+print('Done!')
+
