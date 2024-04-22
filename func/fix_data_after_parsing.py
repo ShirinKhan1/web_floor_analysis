@@ -11,7 +11,6 @@ args = ['Тип жилья',
         'Отделка',
         'Вид из окон',
         'Ремонт',
-        'Газоснабжение',
         'Балкон/лоджия',
         ]
 
@@ -19,15 +18,10 @@ args_house = [
     'Количество лифтов',
     'Тип дома',
     'Парковка',
-    'Тип перекрытий',
-    'Подъезды',
     'Отопление',
-    'Аварийность',
-    'Строительная серия',
     'Мусоропровод',
     'Год постройки',
-    'Газоснабжение'
-
+    'Газоснабжение',
 ]
 
 
@@ -39,42 +33,41 @@ def del_dif_2(string):
     return re.sub(r'[^\d,]+', '', string)
 
 
-def fix_data_after_parsing(filename=FILE_NAME):
+def fix_data_after_parsing(data_float: dict) -> dict:
     new_data = None
-    with open(filename + '.json', 'r', encoding='utf-8') as file:
-        existing_data = json.load(file)
+    # with open(link_float + '.json', 'r', encoding='utf-8') as file:
+    #     existing_data = json.load(file)
 
         # row = existing_data[20]
         # print(test_row['price_info'])
-        for row_number in range(len(existing_data)):
-            row = existing_data[row_number]
-            row['name'] = row['name'].replace(' м²', '')
-            for i in range(len(row['price_info'])):
-                if 'Условия сделки' in row['price_info'][i]:
-                    row['price_info'][i] = ['Условия сделки', row['price_info'][i][len('Условия сделки'):]]
-                elif 'Ипотекавозможна' == row['price_info'][i]:
-                    row['price_info'][i] = ['Ипотека', 'Возможна']
+        # for row_number in range(len(existing_data)):
+    data_float['name'] = data_float['name'].replace(' м²', '')
+    for i in range(len(data_float['price_info'])):
+        if 'Условия сделки' in data_float['price_info'][i]:
+            data_float['price_info'][i] = ['Условия сделки', data_float['price_info'][i][len('Условия сделки'):]]
+        elif 'Ипотекавозможна' == data_float['price_info'][i]:
+            data_float['price_info'][i] = ['Ипотека', 'Возможна']
 
-            row['floor'] = [int(num) for num in row['floor'][len('Этаж'):].split(' из ')]
+    data_float['floor'] = [int(num) for num in data_float['floor'][len('Этаж'):].split(' из ')]
 
-            for i in range(len(row['float'])):
-                for arg in args:
-                    if arg in row['float'][i]:
-                        row['float'][i] = [arg, del_dif(row['float'][i][len(arg):])]
-                        if 'площадь' in row['float'][i][0].lower() or 'высота' in row['float'][i][0].lower():
-                            row['float'][i][1] = float(del_dif_2(row['float'][i][1]).replace(',', '.'))
-                        break
-            # print(test_row['house'])
+    for i in range(len(data_float['float'])):
+        for arg in args:
+            if arg in data_float['float'][i]:
+                data_float['float'][i] = [arg, del_dif(data_float['float'][i][len(arg):])]
+                if 'площадь' in data_float['float'][i][0].lower() or 'высота' in data_float['float'][i][0].lower():
+                    data_float['float'][i][1] = float(del_dif_2(data_float['float'][i][1]).replace(',', '.'))
+                break
+    # print(test_row['house'])
 
-            for i in range(len(row['house'])):
-                for arg in args_house:
-                    if arg in row['house'][i]:
-                        row['house'][i] = [arg, del_dif(row['house'][i][len(arg):])]
-                        # if 'Количество лифтов' in test_row['house'][i][0]:
-                        #     test_row['house'][i] = test_row['house'][i][1].split(',')
-                        break
-        new_data = existing_data
-    return new_data
+    for i in range(len(data_float['house'])):
+        for arg in args_house:
+            if arg in data_float['house'][i]:
+                data_float['house'][i] = [arg, del_dif(data_float['house'][i][len(arg):])]
+                # if 'Количество лифтов' in test_row['house'][i][0]:
+                #     test_row['house'][i] = test_row['house'][i][1].split(',')
+                break
+    # new_data = existing_data
+    return data_float
 
 
 def check_new_col(data):

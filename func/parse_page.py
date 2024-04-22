@@ -29,8 +29,8 @@ def get_price(main):
 
 def get_float(main):
     try:
-        data = [val.text for val in main.find('div', class_='a10a3f92e9--group--K5ZqN').
-        find_all('div', class_='a10a3f92e9--item--qJhdR')]
+        data = [val.text for val in main.find('table', class_='a10a3f92e9--group--K5ZqN')
+        .find_all('div', class_='a10a3f92e9--item--qJhdR')]
         return data
     except Exception as e:
         return e
@@ -38,7 +38,7 @@ def get_float(main):
 
 def get_house(main):
     try:
-        return [val.text for val in main.find('div', class_='a10a3f92e9--group--K5ZqN a10a3f92e9--right--_9uBM').
+        return [val.text for val in main.find('table', class_='a10a3f92e9--group--K5ZqN a10a3f92e9--right--_9uBM').
         find_all('div', class_='a10a3f92e9--item--qJhdR')]
     except Exception as e:
         return e
@@ -110,15 +110,15 @@ def get_page(url):
     r = requests.get(url)
     bs = BeautifulSoup(r.content, features='html.parser')
     data = {
-        # 'name': get_name(bs),
-        # 'price': get_price(bs),
-        # 'price_info': get_price_info(bs),
-        # 'float': get_float(bs),
-        # 'house': get_house(bs),
-        # 'addres': get_address(bs),
+        'name': get_name(bs),
+        'price': get_price(bs),
+        'price_info': get_price_info(bs),
+        'float': get_float(bs),
+        'house': get_house(bs),
+        'addres': get_address(bs),
         'photos': get_photos(bs),
-        # 'link': url
-        # 'floor': get_floor(bs)
+        'link': url,
+        'floor': get_floor(bs)
     }
     for key in data:
         if isinstance(data[key], Exception):
@@ -146,17 +146,15 @@ def save_dict_to_json(dictionary, file_name):
         json.dump(data_to_write, file, ensure_ascii=False, indent=4)
 
 
-def parse_links(links: str, num_page=0):
-    import pandas as pd
-    df_links = pd.read_csv(links)
-    for i in range(num_page, len(df_links)):
-        print(i)
-        # print(df_links.iloc[i].links)
-        data = get_page(df_links.iloc[i].links)
-        print(data)
-        if not isinstance(data, tuple):
-            save_dict_to_json(data, 'parse1.json')
-        time.sleep(60)
+def parse_link(link: str) -> dict:
+    # df_links = pd.read_csv(links)
+    # for i in range(num_page, len(df_links)):
+    #     print(i)
+    # print(df_links.iloc[i].links)
+    return get_page(link)
+    # print(data)
+    # if not isinstance(data, tuple):
+    #     save_dict_to_json(data, 'parse1.json')
 
 
 if __name__ == '__main__':
