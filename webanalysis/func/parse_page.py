@@ -14,15 +14,23 @@ URL = 'https://www.cian.ru/sale/flat/292125772/'
 
 def get_name(main):
     try:
-        return main.find('div', class_='a10a3f92e9--container--BIifh a10a3f92e9--container--M0xiL').text
+        name = main.find('h1', class_='a10a3f92e9--title--vlZwT').text
+        if name:
+            return name
+        else:
+            raise ValueError
     except Exception as e:
         return e
 
 
 def get_price(main):
     try:
-        price_not_valid = main.find('div', class_='a10a3f92e9--amount--ON6i1').text
-        return int(''.join(filter(str.isdigit, price_not_valid)))
+        price_not_valid = main.find(attrs={'data-testid': 'price-amount'}).text
+        price = int(''.join(filter(str.isdigit, price_not_valid)))
+        if price:
+            return price
+        else:
+            raise ValueError
     except Exception as e:
         return e
 
@@ -30,7 +38,7 @@ def get_price(main):
 def get_float(main):
     try:
         data = [val.text for val in main.find('table', class_='a10a3f92e9--group--K5ZqN')
-        .find_all('div', class_='a10a3f92e9--item--qJhdR')]
+        .find_all('tr', class_='a10a3f92e9--item--qJhdR')]
         return data
     except Exception as e:
         return e
@@ -39,7 +47,7 @@ def get_float(main):
 def get_house(main):
     try:
         return [val.text for val in main.find('table', class_='a10a3f92e9--group--K5ZqN a10a3f92e9--right--_9uBM').
-        find_all('div', class_='a10a3f92e9--item--qJhdR')]
+        find_all('tr', class_='a10a3f92e9--item--qJhdR')]
     except Exception as e:
         return e
 
@@ -106,6 +114,14 @@ def get_floor(main):
         return e
 
 
+def get_room(name: str):
+    name = name.split(sep=',')[0]
+    if 'студия' in name.lower():
+        return 0
+    else:
+        return int(name[len('Продается '):].split(sep='-комн')[0])
+
+
 def get_page(url):
     r = requests.get(url)
     bs = BeautifulSoup(r.content, features='html.parser')
@@ -115,10 +131,11 @@ def get_page(url):
         'price_info': get_price_info(bs),
         'float': get_float(bs),
         'house': get_house(bs),
-        'addres': get_address(bs),
+        'address': get_address(bs),
         'photos': get_photos(bs),
         'link': url,
-        'floor': get_floor(bs)
+        'floor': get_floor(bs),
+        'cntroom': get_room(get_name(bs)),
     }
     for key in data:
         if isinstance(data[key], Exception):

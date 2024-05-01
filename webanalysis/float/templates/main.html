@@ -38,15 +38,18 @@
 <body>
 
 <div class="header">
-    <div class="right-buttons">
-        <a class="fa-registered" href="register/">Регистрация</a>
-        <a class="login" href="login/">Авторизация</a>
+    <div class="last-related">
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'profile' %}"> {{ user.username }}</a> | <a href="{% url 'users:logout' %}">Выйти</a>
+        {% else %}
+        <a class="fa-registered" href="{% url 'users:register' %}">Регистрация</a> | <a class="login" href="{% url 'users:login' %}">Авторизация</a>
+        {% endif %}
     </div>
 </div>
 
 <div class="center-buttons">
-    <a class="red" href="parsing/">Парсинг области</a>
-    <a class="red" href="monitoring/">Мониторинг области</a>
+    <a class="red" href="{% url 'parsing_page' %}">Парсинг области</a>
+    <a class="red" href="{% url 'monitoring_page' %}">Мониторинг области</a>
     <a class="red" href="calcai/">Умный калькулятор</a>
 </div>
 

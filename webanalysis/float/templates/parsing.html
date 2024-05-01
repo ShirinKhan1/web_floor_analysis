@@ -11,6 +11,8 @@
     <label for="linkInput">Введите вашу ссылку:</label><br>
     {% csrf_token %}
     {{ form.as_p }}
+    <input type="hidden" name="user_id" value="{{ user.id }}">
+    <input type="hidden" name="method" value="parse">
     <button type="submit">Начать</button>
 </form>
 

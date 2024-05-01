@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Умный калькулятор</title>
+</head>
+<body>
+
+<form action="{% url 'calculator_page' %}" method="POST">
+    <label for="linkInput">Введите данные о квартире:</label><br>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Расчитать</button>
+</form>
+
+</body>
+</html>

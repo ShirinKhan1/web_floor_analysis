@@ -1,6 +1,5 @@
 import json
 import pandas as pd
-from fix_data_after_parsing import args, args_house
 
 FILE_NAME = 'parse1_fixed.json'
 file_to_csv = 'parse1_fixed.csv'
@@ -23,8 +22,8 @@ def final_fix(data_float):
         for n_key in range(len(data_float[p])):
             key = data_float[p][n_key][0]
             value = data_float[p][n_key][1]
-
-            data_float[key] = value
+            if len(key) > 3:
+                data_float[key] = value
         # print(existing_data[0]['price_info'][n_key][0])
         data_float.pop(p)
 
