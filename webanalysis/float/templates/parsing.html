@@ -4,16 +4,61 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Парсинг</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        padding: 20px;
+    }
+    form {
+        max-width: 400px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    label {
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+    input[type="text"],
+    input[type="url"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    button[type="submit"] {
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+    button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+</style>
 </head>
 <body>
 
 <form action="{% url 'parsing_page' %}" method="POST">
-    <label for="linkInput">Введите вашу ссылку:</label><br>
     {% csrf_token %}
+    <label for="linkInput">Введите вашу ссылку:</label>
+
     {{ form.as_p }}
+
     <input type="hidden" name="user_id" value="{{ user.id }}">
     <input type="hidden" name="method" value="parse">
-    <button type="submit">Начать</button>
+
+    <button type="submit">Начать парсинг</button>
+   <a href="{% url 'home' %}">Главное меню</a>
 </form>
 
 </body>

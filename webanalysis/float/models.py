@@ -31,72 +31,22 @@ class Float(models.Model):
     parking = models.CharField(max_length=100, null=True)
     heating = models.CharField(max_length=100, null=True)
     garbage = models.CharField(max_length=100, null=True)
-    gas = models.CharField(max_length=100, null=True)
+    city = models.CharField(max_length=100, null=True)
+    district = models.CharField(max_length=100, null=True)
 
 
-# class Type_of_housing(models.Model):
-#     type_of_housing_id = models.IntegerField(primary_key=True)
-#     value = models.CharField(max_length=100, unique=True)
-#
-#
-# class Deal(models.Model):
-#     deal_id = models.IntegerField(primary_key=True)
-#     value = models.CharField(max_length=100, unique=True)
-#
-#
-# class Window(models.Model):
-#     window_id = models.IntegerField(primary_key=True)
-#     value = models.CharField(max_length=100, unique=True)
-#
-#
-# class Repair(models.Model):
-#     repair_id = models.IntegerField(primary_key=True)
-#     value = models.CharField(max_length=100, unique=True)
-#
-#
-# class Finishing(models.Model):
-#     Finishing_id = models.IntegerField(primary_key=True)
-#     value = models.CharField(max_length=100, unique=True)
-#
-#
-# class TypeOfHouse(models.Model):
-#     Type_of_house_id = models.IntegerField(primary_key=True)
-#     value = models.CharField(max_length=100, unique=True)
-#
-#
-# class Parking(models.Model):
-#     Parking_id = models.IntegerField(primary_key=True)
-#     value = models.CharField(max_length=100, unique=True)
-#
-#
-# class Heating(models.Model):
-#     Heating_id = models.IntegerField(primary_key=True)
-#     value = models.CharField(max_length=100, unique=True)
-#
-#
-# class Garbage(models.Model):
-#     Garbage_id = models.IntegerField(primary_key=True)
-#     value = models.CharField(max_length=100, unique=True)
-#
-#
-# class Gas(models.Model):
-#     Gas_id = models.IntegerField(primary_key=True)
-#     value = models.CharField(max_length=100, unique=True)
-#
-#
-# class Img(models.Model):
-#     id_float = models.IntegerField()
-#     url = models.CharField(max_length=200, unique=True)
-
-
-# class User(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     name = models.CharField(max_length=40)
-#     surname = models.CharField(max_length=40)
-#     msisdn = models.CharField(max_length=11)
-#     email = models.CharField(max_length=100)
-#     created = models.DateTimeField(auto_now_add=True)
-
+class FloatRent(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200, null=True)
+    cntroom = models.IntegerField(null=True)
+    price = models.IntegerField(null=True)
+    livingarea = models.FloatField(null=True)
+    totalarea = models.FloatField(null=True)
+    kitchenarea = models.FloatField(null=True)
+    city = models.CharField(max_length=100, null=True)
+    district = models.CharField(max_length=100, null=True)
+    address = models.CharField(max_length=200, null=True)
+    link = models.URLField(max_length=100, unique=True)
 
 class History(models.Model):
     id = models.AutoField(primary_key=True)

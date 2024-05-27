@@ -122,6 +122,18 @@ def get_room(name: str):
         return int(name[len('Продается '):].split(sep='-комн')[0])
 
 
+def get_city(address: str):
+    parts = address.split()
+    city, district = None, None
+    if parts[0] == 'Ростовская':
+        city = parts[2]
+        district = parts[4]
+    elif parts[0] == 'Москва':
+        city = parts[0]
+        district = parts[1]
+    return city, district
+
+
 def get_page(url):
     r = requests.get(url)
     bs = BeautifulSoup(r.content, features='html.parser')
@@ -136,6 +148,9 @@ def get_page(url):
         'link': url,
         'floor': get_floor(bs),
         'cntroom': get_room(get_name(bs)),
+        'city': get_city(get_address(bs))[0],
+        'district': get_city(get_address(bs))[1],
+
     }
     for key in data:
         if isinstance(data[key], Exception):

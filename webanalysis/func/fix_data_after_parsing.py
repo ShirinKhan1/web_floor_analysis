@@ -38,6 +38,7 @@ def fix_data_after_parsing(data_float: dict) -> dict:
     # with open(link_float + '.json', 'r', encoding='utf-8') as file:
     #     existing_data = json.load(file)
 
+
     # row = existing_data[20]
     # print(test_row['price_info'])
     # for row_number in range(len(existing_data)):

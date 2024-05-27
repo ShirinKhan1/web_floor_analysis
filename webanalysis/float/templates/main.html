@@ -9,48 +9,68 @@
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
+        background-color: #f8f9fa; /* Цвет фона */
     }
     .header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 10px 20px;
-        background-color: #f0f0f0;
+        background-color: #343a40; /* Цвет фона заголовка */
+        color: #ffffff; /* Цвет текста заголовка */
     }
-    .header .right-buttons {
+    .header .user-info {
         display: flex;
+        align-items: center;
     }
-    .header .center-buttons {
+    .user-info a {
+        color: #ffffff;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+    .center-content {
         text-align: center;
         margin-top: 50px;
     }
     .button {
         padding: 10px 20px;
-        margin: 0 10px;
-        background-color: #4CAF50;
-        color: white;
+        margin: 10px;
+        background-color: #007bff; /* Цвет кнопок */
+        color: #ffffff;
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+    .button:hover {
+        background-color: #0056b3; /* Цвет кнопок при наведении */
     }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <div class="last-related">
+    <div class="logo">
+        <h1>Анализ квартир</h1>
+    </div>
+    <div class="user-info">
         {% if request.user.is_authenticated %}
-            <a href="{% url 'profile' %}"> {{ user.username }}</a> | <a href="{% url 'users:logout' %}">Выйти</a>
+            <a href="{% url 'users:profile' %}">{{ request.user.username }}</a> | <a href="{% url 'users:logout' %}">Выйти</a>
         {% else %}
-        <a class="fa-registered" href="{% url 'users:register' %}">Регистрация</a> | <a class="login" href="{% url 'users:login' %}">Авторизация</a>
+            <a class="button" href="{% url 'users:register' %}">Регистрация</a>
+            <a class="button" href="{% url 'users:login' %}">Авторизация</a>
         {% endif %}
     </div>
 </div>
 
-<div class="center-buttons">
-    <a class="red" href="{% url 'parsing_page' %}">Парсинг области</a>
-    <a class="red" href="{% url 'monitoring_page' %}">Мониторинг области</a>
-    <a class="red" href="calcai/">Умный калькулятор</a>
+<div class="center-content">
+    <a class="button" href="{% url 'parsing_page' %}">Парсинг области</a>
+    <a class="button" href="{% url 'monitoring_page' %}">Мониторинг области</a>
+    <a class="button" href="calcai/">Умный калькулятор</a>
+    <a class="button" href="{% url 'analysis_district' %}">Анализ района</a>
+    <a class="button" href="{% url 'check_district' %}">Анализ города</a>
 </div>
 
 </body>

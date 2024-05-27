@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DataFrame Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Сводная таблица для района {{ district }} в городе {{ city }}</h1>
+    <a href="{% url 'home' %}">Главное меню</a>
+    <button onclick="applyFiltersAndDownload()">Скачать данные (Excel)</button>
+    <table>
+        <thead>
+            <tr>
+                {% for column in columns %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+                <tr>
+                    {% for value in row %}
+                        {% if 'https' in value %}
+                            <td><a href="{{ value }}">Ссылка</a></td>
+                        {% else %}
+                            <td>{{ value }}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
+<script>
+    function applyFiltersAndDownload() {
+
+        // Получаем таблицу
+        const table = document.querySelector('table');
+
+        // Создаем объект для хранения данных Excel
+        const wb = XLSX.utils.table_to_book(table);
+
+        // Преобразуем книгу в бинарный формат Excel (xlsx)
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+
+        // Функция для преобразования бинарных данных в файл
+        function s2ab(s) {
+            const buf = new ArrayBuffer(s.length);
+            const view = new Uint8Array(buf);
+            for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff;
+            return buf;
+        }
+
+        // Создаем Blob из бинарных данных
+        const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+
+        // Генерируем URL для Blob
+        const url = URL.createObjectURL(blob);
+
+        // Создаем ссылку для скачивания файла
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'filtered_data.xlsx';
+        a.click();
+
+        // Освобождаем ресурсы
+        setTimeout(() => {
+            URL.revokeObjectURL(url);
+        }, 0);
+    }
+</script>
+</html>

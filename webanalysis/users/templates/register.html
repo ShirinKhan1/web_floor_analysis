@@ -3,12 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>Регистрация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        form {
+            max-width: 400px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        
+    </style>
 </head>
 <body>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <p><button type="submit">Зарегистрироваться</button></p>
-        </form>
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_username">Имя пользователя:</label>
+        {{ form.username }}
+        <label for="id_password1">Пароль:</label>
+        {{ form.password1 }}
+        <label for="id_password2">Подтверждение пароля:</label>
+        {{ form.password2 }}
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+
 </body>
 </html>

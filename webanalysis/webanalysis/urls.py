@@ -23,7 +23,7 @@ from float.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('float.urls')),
-    path('accounts/profile/', profile, name='profile'),
+    # path('accounts/profile/', profile, name='profile'),
     path('users/', include('users.urls',  namespace="users")),
 ]
 

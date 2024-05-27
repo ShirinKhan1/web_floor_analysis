@@ -1,10 +1,14 @@
+import pandas as pd
 from django.http import HttpResponse, HttpResponseNotFound, Http404
-from django.shortcuts import render
-from django.template.loader import render_to_string
+from django.shortcuts import render, redirect
+# from django.template.loader import render_to_string
 from float.forms import *
 import datetime
 from func.parse_floats import parse_links
 from func.monitoring import streaming
+from func.estate_analysis import payback, statistic_district
+# from float.tasks import parse_links_task, hello
+import schedule
 
 
 def page_not_found(request, exception):
@@ -17,40 +21,47 @@ def main_page(request):
 
 
 def monitoring_page(request):
-    if request.method == 'POST':
-        form = FloatArea(request.POST)
-        if form.is_valid():
-            # print(form.cleaned_data)
-            args = {
-                'url': form.cleaned_data['link'],
-                'datetimedttm': datetime.datetime.now(),
-                'user_id': request.POST['user_id'],
-                'method': request.POST['method'],
-                'finish': float(request.POST['minutes'])
-            }
-            print(args)
-            streaming(url=args['url'], method=args['method'], user_id=args['user_id'],
-                      datetimedttm=args['datetimedttm'], finish=args['finish'])
+    if not request.user.is_authenticated:
+        return render(request, 'not_auth.html')
     else:
-        form = FloatArea()
-        # t = render_to_string('monitoring.html')
-    return render(request, 'monitoring.html', {'form': form})
+        if request.method == 'POST':
+            form = FloatArea(request.POST)
+            if form.is_valid():
+                # print(form.cleaned_data)
+                args = {
+                    'url': form.cleaned_data['link'],
+                    'datetimedttm': datetime.datetime.now(),
+                    'user_id': request.POST['user_id'],
+                    'method': request.POST['method'],
+                    'finish': float(request.POST['minutes'])
+                }
+                print(args)
+                streaming(url=args['url'], method=args['method'], user_id=args['user_id'],
+                          datetimedttm=args['datetimedttm'], finish=args['finish'])
+        else:
+            form = FloatArea()
+            # t = render_to_string('monitoring.html')
+        return render(request, 'monitoring.html', {'form': form})
     # return HttpResponse("Start to parsing!")
 
 
 def parsing_page(request):
+    if not request.user.is_authenticated:
+        return render(request, 'not_auth.html')
     if request.method == 'POST':
         form = FloatArea(request.POST)
         if form.is_valid():
             args = {
-                'url':  form.cleaned_data['link'],
+                'url': form.cleaned_data['link'],
                 'datetimedttm': datetime.datetime.now(),
                 'user_id': request.POST['user_id'],
                 'method': request.POST['method']
             }
-            print(args)
-            parse_links(url=args['url'], method=args['method'],
-                        user_id=args['user_id'], datetimedttm=args['datetimedttm'])
+            # print(args)
+            # result = hello.delay()
+            # result = parse_links_task.delay(args['url'], args['method'], args['user_id'], args['datetimedttm'])
+            parse_links(args['url'], args['method'], args['user_id'], args['datetimedttm'])
+            # print(hello())
     else:
         form = FloatArea()
     # t = render_to_string('monitoring.html')
@@ -58,14 +69,10 @@ def parsing_page(request):
     # return HttpResponse("Start to parsing!")
 
 
-def profile_page(request):
-    if request.GET['id']:
-        return HttpResponse(f"Profile user with number {request.GET['id']}")
-    else:
-        raise Http404("Profile not found")
-
-
 def calculator_page(request):
+    print(request.user.is_authenticated)
+    if not request.user.is_authenticated:
+        return render(request, 'not_auth.html')
     if request.method == 'POST':
         form = Ai_calc(request.POST)
         if form.is_valid():
@@ -76,9 +83,38 @@ def calculator_page(request):
     return render(request, 'calculator.html', {'form': form})
 
 
-def register_page(request):
-    return HttpResponse("Register page!")
+def analysis_district(request):
+    if not request.user.is_authenticated:
+        return render(request, 'not_auth.html')
+    if request.method == 'GET':
+        return render(request, 'analysis.html')
+    elif request.method == 'POST':
+        print(request.POST)
+        try:
+            df, city, district = payback(request.POST['city'], request.POST['district'])
+            print(df)
+            # df = df.sort_values('Окуп для самозанятого (кол-во месяцов)', axis=1)
+            # print(df)
+            return render(request, 'get_payback.html',
+                          {'columns': df.columns,
+                           'rows': df.values,
+                           'city': city, 'district': district})
+        except Exception as e:
+            print(e)
+            return render(request, 'analysis.html')
 
 
-def login_page(request):
-    return HttpResponse("Login page!")
+def check_district(request):
+    if not request.user.is_authenticated:
+        return render(request, 'not_auth.html')
+    if request.method == 'GET':
+        return render(request, 'checking.html')
+    elif request.method == 'POST':
+        print(request.POST)
+        try:
+            rows, columns, city = statistic_district(request.POST['city'])
+            return render(request, 'get_checking.html',
+                          {'columns': columns, 'rows': rows, 'city': city})
+        except Exception as e:
+            print(e)
+            return render(request, 'checking.html')

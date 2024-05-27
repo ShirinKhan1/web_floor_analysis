@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Таблица с данными</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'home' %}">Главное меню</a>
+    <button onclick="applyFiltersAndDownload()">Скачать данные (Excel)</button>
+    <!-- Фильтр по общей площади -->
+    <label for="filterTotalArea">Общая площадь:</label>
+    <input type="number" id="filterTotalAreaValue" placeholder="Значение">
+    <select id="filterTotalAreaCondition">
+        <option value="greater">Больше</option>
+        <option value="less">Меньше</option>
+    </select>
+
+    <!-- Фильтр по площади кухни -->
+    <label for="filterKitchenArea">Площадь кухни:</label>
+    <input type="number" id="filterKitchenAreaValue" placeholder="Значение">
+    <select id="filterKitchenAreaCondition">
+        <option value="greater">Больше</option>
+        <option value="less">Меньше</option>
+    </select>
+
+    <!-- Фильтр по жилой площади -->
+    <label for="filterLivingArea">Жилая площадь:</label>
+    <input type="number" id="filterLivingAreaValue" placeholder="Значение">
+    <select id="filterLivingAreaCondition">
+        <option value="greater">Больше</option>
+        <option value="less">Меньше</option>
+    </select>
+
+    <!-- Фильтр по высоте потолков -->
+    <label for="filterCeilingHeight">Высота потолков:</label>
+    <input type="number" id="filterCeilingHeightValue" placeholder="Значение">
+    <select id="filterCeilingHeightCondition">
+        <option value="greater">Больше</option>
+        <option value="less">Меньше</option>
+    </select>
+
+    <!-- Фильтр по цене за площадь -->
+    <label for="filterPricePerArea">Цена за м²:</label>
+    <input type="number" id="filterPricePerAreaValue" placeholder="Значение">
+    <select id="filterPricePerAreaCondition">
+        <option value="greater">Больше</option>
+        <option value="less">Меньше</option>
+    </select>
+
+    <button onclick="applyFilters()">Применить фильтр</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ссылка</th>
+                <th>Цена</th>
+                <th>Комнаты</th>
+                <th>Этаж</th>
+                <th>Этажность</th>
+                <th>Жилая площадь (м²)</th>
+                <th>Общая площадь (м²)</th>
+                <th>Площадь кухни (м²)</th>
+                <th>Год постройки</th>
+                <th>Высота потолков</th>
+                <th>Лифт</th>
+                <th>Отделка</th>
+                <th>Мусоропровод</th>
+                <th>Газоснабжение</th>
+                <th>Отопление</th>
+                <th>Парковка</th>
+                <th>Ремонт</th>
+                <th>Вид из окон</th>
+                <th>Ипотека</th>
+                <th>Сделка</th>
+                <th>Тип жилья</th>
+                <th>Санузел</th>
+                <th>Балкон/лоджия</th>
+                <th>Цена за м²</th>
+                <th>Тип здания</th>
+                <th>Название объявления</th>
+                <th>Адрес</th>
+            </tr>
+        </thead>
+        <tbody id="propertyTableBody">
+            {% for row in results %}
+                <tr>
+                    <td>{{ row.0 }}</td>
+                    <td><a href="{{ row.1 }}">Ссылка</a></td>
+                    <td>{{ row.2 }}</td>
+                    <td>{{ row.3 }}</td>
+                    <td>{{ row.4 }}</td>
+                    <td>{{ row.5 }}</td>
+                    <td>{{ row.6 }}</td>
+                    <td>{{ row.7 }}</td>
+                    <td>{{ row.8 }}</td>
+                    <td>{{ row.9 }}</td>
+                    <td>{{ row.10 }}</td>
+                    <td>{{ row.11 }}</td>
+                    <td>{{ row.12 }}</td>
+                    <td>{{ row.13 }}</td>
+                    <td>{{ row.14 }}</td>
+                    <td>{{ row.15 }}</td>
+                    <td>{{ row.16 }}</td>
+                    <td>{{ row.17 }}</td>
+                    <td>{{ row.18 }}</td>
+                    <td>{{ row.19 }}</td>
+                    <td>{{ row.20 }}</td>
+                    <td>{{ row.21 }}</td>
+                    <td>{{ row.22 }}</td>
+                    <td>{{ row.23 }}</td>
+                    <td>{{ row.24 }}</td>
+                    <td>{{ row.25 }}</td>
+                    <td>{{ row.26 }}</td>
+                    <td>{{ row.27 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+<script>
+    function applyFilters() {
+        // Получаем значения фильтров
+        const totalAreaValue = parseFloat(document.getElementById('filterTotalAreaValue').value);
+        const kitchenAreaValue = parseFloat(document.getElementById('filterKitchenAreaValue').value);
+        const livingAreaValue = parseFloat(document.getElementById('filterLivingAreaValue').value);
+        const ceilingHeightValue = parseFloat(document.getElementById('filterCeilingHeightValue').value);
+        const pricePerAreaValue = parseFloat(document.getElementById('filterPricePerAreaValue').value);
+
+        // Получаем условия фильтрации
+        const totalAreaCondition = document.getElementById('filterTotalAreaCondition').value;
+        const kitchenAreaCondition = document.getElementById('filterKitchenAreaCondition').value;
+        const livingAreaCondition = document.getElementById('filterLivingAreaCondition').value;
+        const ceilingHeightCondition = document.getElementById('filterCeilingHeightCondition').value;
+        const pricePerAreaCondition = document.getElementById('filterPricePerAreaCondition').value;
+
+        // Получаем все строки таблицы
+        const rows = document.querySelectorAll('#propertyTableBody tr');
+
+        // Проходимся по каждой строке и проверяем условия фильтрации
+        rows.forEach(row => {
+            const rowData = row.getElementsByTagName('td');
+
+            // Получаем значения колонок для текущей строки
+            const totalArea = parseFloat(rowData[7].textContent);
+            const kitchenArea = parseFloat(rowData[8].textContent);
+            const livingArea = parseFloat(rowData[6].textContent);
+            const ceilingHeight = parseFloat(rowData[10].textContent);
+            const pricePerArea = parseFloat(rowData[22].textContent);
+
+            // Проверяем условия фильтрации и скрываем/отображаем строки
+            const isVisible =
+                (isNaN(totalAreaValue) || (totalAreaCondition === 'greater' && totalArea > totalAreaValue) ||
+                    (totalAreaCondition === 'less' && totalArea < totalAreaValue)) &&
+                (isNaN(kitchenAreaValue) || (kitchenAreaCondition === 'greater' && kitchenArea > kitchenAreaValue) ||
+                    (kitchenAreaCondition === 'less' && kitchenArea < kitchenAreaValue)) &&
+                (isNaN(livingAreaValue) || (livingAreaCondition === 'greater' && livingArea > livingAreaValue) ||
+                    (livingAreaCondition === 'less' && livingArea < livingAreaValue)) &&
+                (isNaN(ceilingHeightValue) || (ceilingHeightCondition === 'greater' && ceilingHeight > ceilingHeightValue) ||
+                    (ceilingHeightCondition === 'less' && ceilingHeight < ceilingHeightValue)) &&
+                (isNaN(pricePerAreaValue) || (pricePerAreaCondition === 'greater' && pricePerArea > pricePerAreaValue) ||
+                    (pricePerAreaCondition === 'less' && pricePerArea < pricePerAreaValue));
+
+            // Применяем стиль для скрытия или отображения строки
+            row.style.display = isVisible ? '' : 'none';
+        });
+    }
+</script>
+
+<!-- Подключение библиотеки xlsx (загружайте перед использованием) --><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
+<script>
+    function applyFiltersAndDownload() {
+        // Применяем фильтры к таблице
+        applyFilters();
+
+        // Получаем таблицу
+        const table = document.querySelector('table');
+
+        // Создаем объект для хранения данных Excel
+        const wb = XLSX.utils.table_to_book(table);
+
+        // Преобразуем книгу в бинарный формат Excel (xlsx)
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+
+        // Функция для преобразования бинарных данных в файл
+        function s2ab(s) {
+            const buf = new ArrayBuffer(s.length);
+            const view = new Uint8Array(buf);
+            for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff;
+            return buf;
+        }
+
+        // Создаем Blob из бинарных данных
+        const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+
+        // Генерируем URL для Blob
+        const url = URL.createObjectURL(blob);
+
+        // Создаем ссылку для скачивания файла
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'filtered_data.xlsx';
+        a.click();
+
+        // Освобождаем ресурсы
+        setTimeout(() => {
+            URL.revokeObjectURL(url);
+        }, 0);
+    }
+</script>
+
+
+
+
+</body>
+</html>
