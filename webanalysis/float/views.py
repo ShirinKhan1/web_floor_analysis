@@ -4,11 +4,14 @@ from django.shortcuts import render, redirect
 # from django.template.loader import render_to_string
 from float.forms import *
 import datetime
+
+from func.get_geopandas import get_geopandas
 from func.parse_floats import parse_links
 from func.monitoring import streaming
 from func.estate_analysis import payback, statistic_district
+import plotly.express as px
+import plotly.io as pio
 # from float.tasks import parse_links_task, hello
-import schedule
 
 
 def page_not_found(request, exception):
@@ -17,7 +20,8 @@ def page_not_found(request, exception):
 
 def main_page(request):
     # t = render_to_string('main.html')
-    return render(request, 'main.html')
+    graph = get_geopandas()
+    return render(request, 'main.html', {'graph': graph})
 
 
 def monitoring_page(request):
@@ -92,13 +96,18 @@ def analysis_district(request):
         print(request.POST)
         try:
             df, city, district = payback(request.POST['city'], request.POST['district'])
-            print(df)
-            # df = df.sort_values('Окуп для самозанятого (кол-во месяцов)', axis=1)
-            # print(df)
+            col_gr = ['Цена продажи', 'Кол-во комнат', 'Общая площадь']
+            fig = px.scatter(df, x=col_gr[1], y=col_gr[0], color=col_gr[2],
+                             # labels={'cntroom': 'Количество комнат', 'price2': 'Цена', 'totalarea': 'Общая площадь'},
+                             title='Зависимость цены от количества комнат и общей площади')
+            graph_html = pio.to_html(fig, full_html=False)
+
+            # Конвертация графика в HTML
+            graph_html = pio.to_html(fig, full_html=False)
             return render(request, 'get_payback.html',
                           {'columns': df.columns,
                            'rows': df.values,
-                           'city': city, 'district': district})
+                           'city': city, 'district': district, 'graph': graph_html})
         except Exception as e:
             print(e)
             return render(request, 'analysis.html')
@@ -112,9 +121,11 @@ def check_district(request):
     elif request.method == 'POST':
         print(request.POST)
         try:
-            rows, columns, city = statistic_district(request.POST['city'])
+            rows, columns, city, df = statistic_district(request.POST['city'])
+            fig = px.box(df, x='Кол-во комнат', y='Цена продажи', points="all")
+            graph_html = pio.to_html(fig, full_html=False)
             return render(request, 'get_checking.html',
-                          {'columns': columns, 'rows': rows, 'city': city})
+                          {'columns': columns, 'rows': rows, 'city': city, 'graph': graph_html})
         except Exception as e:
             print(e)
             return render(request, 'checking.html')

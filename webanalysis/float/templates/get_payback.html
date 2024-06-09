@@ -16,6 +16,13 @@
 </head>
 <body>
     <h1>Сводная таблица для района {{ district }} в городе {{ city }}</h1>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <div>
+        {{ graph|safe }}
+    </div>
+
+</body>
+    <br>
     <a href="{% url 'home' %}">Главное меню</a>
     <button onclick="applyFiltersAndDownload()">Скачать данные (Excel)</button>
     <table>

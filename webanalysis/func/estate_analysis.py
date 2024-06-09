@@ -22,11 +22,12 @@ def get_floats(city: str, district=None, eng=engine):
                             JOIN float_addrescoord fa ON ff.address = fa.address
                             WHERE city = '{city}'""")
         result = conn.execute(stmt)
+        k = result.keys()
     # value = [x for x in result.query]
     # fixed_value = []
     # for val in value:
     #     fixed_value.append(tuple("Пусто" if value is None else value for value in val))
-    return result.keys().keys, result.all()
+    return k, result.all()
 
 
 def get_floats_rent(city: str, district: str, eng=engine):
@@ -37,7 +38,7 @@ def get_floats_rent(city: str, district: str, eng=engine):
                         JOIN float_addrescoord fa ON ffr.address = fa.address
                         WHERE city = '{city}' and district = '{district}' """)
         result = conn.execute(stmt)
-    return result.keys().keys, result.all()
+    return result.keys(), result.all()
 
 
 def get_mean_price(cntroom: int, w: float, l: float, totalarea: float, df_floats: pd.DataFrame) -> float:
@@ -179,7 +180,8 @@ def statistic_district(city: str):
                'Район'
                ]
     df_st = pd.DataFrame(rows, columns=columns)
-    grouped = df_st[df_st['Город'] == city].groupby(['Район', 'Кол-во комнат'])['Цена продажи'].describe()
+    df_st = df_st[df_st['Город'] == city]
+    grouped = df_st.groupby(['Район', 'Кол-во комнат'])['Цена продажи'].describe()
     # grouped.plot(kind='box', legend=True)
     # plt.show()
     grouped['std'].fillna(0, inplace=True)
@@ -190,7 +192,7 @@ def statistic_district(city: str):
     grouped.rename(columns={'mean': 'Средняя цена', 'std': 'Стандартное отклонение',
                             'count': 'Кол-во недвижимости'}, inplace=True)
 
-    return grouped.values, grouped.columns, city
+    return grouped.values, grouped.columns, city, df_st
 
 
 if __name__ == '__main__':

@@ -68,10 +68,13 @@
 <div class="center-content">
     <a class="button" href="{% url 'parsing_page' %}">Парсинг области</a>
     <a class="button" href="{% url 'monitoring_page' %}">Мониторинг области</a>
-    <a class="button" href="calcai/">Умный калькулятор</a>
     <a class="button" href="{% url 'analysis_district' %}">Анализ района</a>
     <a class="button" href="{% url 'check_district' %}">Анализ города</a>
 </div>
-
+<br>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <div>
+        {{ graph|safe }}
+    </div>
 </body>
 </html>
